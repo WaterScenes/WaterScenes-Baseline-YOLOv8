@@ -1,2 +1,5 @@
 
 __pycache__
+map_out
+logs
+model_data/yolov8_waterscenes.pth

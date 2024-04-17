@@ -25,9 +25,9 @@ class YOLO(object):
         #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         #--------------------------------------------------------------------------#
-        "model_path"        : 'model_data/yolov8_vr.pth',
-        "classes_path"      : 'model_data/waterscenes_benchmark.txt',
-        "radar_root": r"E:\Big_Datasets\water_surface\benchmark_new\WaterScenes_new\radar\VOCradar_new",
+        "model_path"        : 'model_data/yolov8_waterscenes.pth',
+        "classes_path"      : 'model_data/waterscenes.txt',
+        "radar_root"        : '/data/WaterScenes_Published/VOCradar640_new',
         #---------------------------------------------------------------------#
         #   输入图片的大小，必须为32的倍数。
         #---------------------------------------------------------------------#
@@ -373,7 +373,7 @@ class YOLO(object):
         print('Onnx model save as {}'.format(model_path))
 
     def get_map_txt(self, image_id, image, class_names, map_out_path):
-        f = open(os.path.join(map_out_path, "detection-results/"+image_id[9:25]+".txt"), "w", encoding='utf-8')
+        f = open(os.path.join(map_out_path, "detection-results/"+image_id+".txt"), "w", encoding='utf-8')
         image_shape = np.array(np.shape(image)[0:2])
         #---------------------------------------------------------#
         #   在这里将图像转换成RGB图像，防止灰度图在预测时报错。
@@ -393,7 +393,7 @@ class YOLO(object):
         # ------------------------------#
         #   读取雷达特征map
         # ------------------------------#
-        radar_path = os.path.join(self.radar_root, image_id[9:25] + '.npz')
+        radar_path = os.path.join(self.radar_root, image_id + '.npz')
         radar_data = np.load(radar_path)['arr_0']
         radar_data = torch.from_numpy(radar_data).type(torch.FloatTensor).unsqueeze(0)
 

@@ -52,7 +52,7 @@ class YoloDataset(Dataset):
         index       = index % self.length
 
         name = self.annotation_lines[index]
-        pattern_string = "\d{10}.\d{5}"
+        pattern_string = "\d{5}"
         pattern = re.compile(pattern_string)  # 查找数字
         name = pattern.findall(name)[-1]
 
