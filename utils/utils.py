@@ -75,6 +75,19 @@ def preprocess_input(image):
     image /= 255.0
     return image
 
+
+def preprocess_input_radar(data):
+    normalized_data = np.zeros_like(data, dtype=np.float32)
+
+    for i in range(data.shape[0]):
+        min_val = np.min(data[i])
+        max_val = np.max(data[i])
+
+        if max_val != min_val:
+            normalized_data[i] = (data[i] - min_val) / (max_val - min_val)
+
+    return normalized_data
+
 def show_config(**kwargs):
     print('Configurations:')
     print('-' * 70)

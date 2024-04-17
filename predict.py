@@ -3,7 +3,8 @@
 #   整合到了一个py文件中，通过指定mode进行模式的修改。
 #-----------------------------------------------------------------------#
 import time
-
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 import cv2
 import numpy as np
 from PIL import Image
@@ -84,11 +85,12 @@ if __name__ == "__main__":
             img = input('Input image filename:')
             try:
                 image = Image.open(img)
+                image_id = img[-20:-4]
             except:
                 print('Open Error! Try again!')
                 continue
             else:
-                r_image = yolo.detect_image(image, crop = crop, count=count)
+                r_image = yolo.detect_image(image, image_id, crop=crop, count=count)
                 r_image.show()
 
     elif mode == "video":

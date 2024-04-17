@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+from nets.shuffle_attention import ShuffleAttention
+from nets.radar_conv import RadarConv, RCBlock
 
 
 def autopad(k, p=None, d=1):  
@@ -87,22 +89,31 @@ class Backbone(nn.Module):
         #-----------------------------------------------#
         # 3, 640, 640 => 32, 640, 640 => 64, 320, 320
         self.stem = Conv(3, base_channels, 3, 2)
+
+        self.stem_radar = RadarConv(in_channels=4, out_channels=base_channels, kernel_size=3, stride=2,
+                                    first_calculator='pool')
+        self.learnable_param = nn.Parameter(torch.tensor(torch.rand(1)), requires_grad=True)
+        # self.weighting = nn.Sigmoid()
+        self.shuffle_attn = ShuffleAttention(channel=base_channels, G=4)
         
         # 64, 320, 320 => 128, 160, 160 => 128, 160, 160
         self.dark2 = nn.Sequential(
             Conv(base_channels, base_channels * 2, 3, 2),
             C2f(base_channels * 2, base_channels * 2, base_depth, True),
         )
+
         # 128, 160, 160 => 256, 80, 80 => 256, 80, 80
         self.dark3 = nn.Sequential(
             Conv(base_channels * 2, base_channels * 4, 3, 2),
             C2f(base_channels * 4, base_channels * 4, base_depth * 2, True),
         )
+
         # 256, 80, 80 => 512, 40, 40 => 512, 40, 40
         self.dark4 = nn.Sequential(
             Conv(base_channels * 4, base_channels * 8, 3, 2),
             C2f(base_channels * 8, base_channels * 8, base_depth * 2, True),
         )
+
         # 512, 40, 40 => 1024 * deep_mul, 20, 20 => 1024 * deep_mul, 20, 20
         self.dark5 = nn.Sequential(
             Conv(base_channels * 8, int(base_channels * 16 * deep_mul), 3, 2),
@@ -122,9 +133,10 @@ class Backbone(nn.Module):
             self.load_state_dict(checkpoint, strict=False)
             print("Load weights from " + url.split('/')[-1])
 
-    def forward(self, x):
+    def forward(self, x, x_radar):
         x = self.stem(x)
-        x = self.dark2(x)
+        x_radar = self.stem_radar(x_radar)
+        x = self.dark2(x+self.learnable_param*self.shuffle_attn(x_radar))
         #-----------------------------------------------#
         #   dark3的输出为256, 80, 80，是一个有效特征层
         #-----------------------------------------------#

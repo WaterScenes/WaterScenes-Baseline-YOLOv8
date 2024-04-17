@@ -97,7 +97,7 @@ class YoloBody(nn.Module):
         self.shape      = None
         self.nl         = len(ch)
         # self.stride     = torch.zeros(self.nl)
-        self.stride     = torch.tensor([256 / x.shape[-2] for x in self.backbone.forward(torch.zeros(1, 3, 256, 256))])  # forward
+        self.stride     = torch.tensor([640 / x.shape[-2] for x in self.backbone.forward(torch.zeros(1, 3, 640, 640), torch.zeros(1, 4, 640, 640))])  # forward
         self.reg_max    = 16  # DFL channels (ch[0] // 16 to scale 4/8/12/16/20 for n/s/m/l/x)
         self.no         = num_classes + self.reg_max * 4  # number of outputs per anchor
         self.num_classes = num_classes
@@ -119,9 +119,9 @@ class YoloBody(nn.Module):
                 m.forward = m.forward_fuse  # update forward
         return self
     
-    def forward(self, x):
+    def forward(self, x, x_radar):
         #  backbone
-        feat1, feat2, feat3 = self.backbone.forward(x)
+        feat1, feat2, feat3 = self.backbone.forward(x, x_radar)
         
         #------------------------加强特征提取网络------------------------# 
         # 1024 * deep_mul, 20, 20 => 1024 * deep_mul, 40, 40

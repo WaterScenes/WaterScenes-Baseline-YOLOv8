@@ -17,11 +17,11 @@ from yolo import YOLO
 #   map_mode为1代表仅仅获得预测结果。
 #   map_mode为2代表仅仅获得计算map。
 #---------------------------------------------------------------------------#
-map_mode            = 0
+map_mode            = 2
 #-------------------------------------------------------#
 #   指向了验证集标签与图片路径
 #-------------------------------------------------------#
-cocoGt_path         = 'coco_dataset/annotations/instances_val2017.json'
+cocoGt_path         = '/home/grw/workspace/Datasets/WaterScenes_new/test.json'
 dataset_img_path    = 'coco_dataset/val2017'
 #-------------------------------------------------------#
 #   结果输出的文件夹，默认为map_out
