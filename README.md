@@ -22,15 +22,15 @@
    * Modify paths in `yolo.py`
 
       ```python
-            "model_path"        : 'model_data/yolov8_waterscenes.pth',
-            "classes_path"      : 'model_data/waterscenes.txt',
-            "radar_root"        : '/data/WaterScenes_Published/VOCradar640_new',
+      "model_path"        : 'model_data/yolov8_waterscenes.pth',
+      "classes_path"      : 'model_data/waterscenes.txt',
+      "radar_root"        : '/data/WaterScenes_Published/VOCradar640_new',
       ```
 
    * Modify paths in `get_map.py`
 
       ```python
-         VOCdevkit_path  = '/data/WaterScenes_Published'
+      VOCdevkit_path  = '/data/WaterScenes_Published'
       ```
 
    * run `python get_map.py`
